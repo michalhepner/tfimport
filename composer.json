@@ -1,0 +1,29 @@
+{
+    "name": "michalhepner/tfimport",
+    "description": "A utility to import existing resources into terraform configuration.",
+    "type": "project",
+    "license": "AGPL-3.0-or-later",
+    "autoload": {
+        "psr-4": {
+            "MichalHepner\\Tfimport\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Michał Hepner",
+            "email": "michal.hepner@gmail.com"
+        }
+    ],
+    "require": {
+        "symfony/process": "^6.1",
+        "symfony/console": "^6.1",
+        "symfony/filesystem": "^6.1",
+        "psr/log": "^3.0",
+        "symfony/finder": "^6.1"
+    },
+    "require-dev": {
+        "symfony/dom-crawler": "^6.1",
+        "guzzlehttp/guzzle": "^7.4",
+        "michalhepner/phar-compiler": "^1-dev"
+    }
+}

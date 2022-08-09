@@ -1,0 +1,60 @@
+#!/usr/bin/env php -d phar.readonly=0
+<?php
+
+require __DIR__.'/../vendor/autoload.php';
+
+use MichalHepner\PharCompiler\Compiler;
+use MichalHepner\PharCompiler\File;
+use MichalHepner\PharCompiler\Stub;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Logger\ConsoleLogger;
+use Symfony\Component\Console\Output\ConsoleOutput;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\SingleCommandApplication;
+use Symfony\Component\Finder\Finder;
+
+ini_set('phar.readonly', 0);
+
+$application = new SingleCommandApplication();
+$application->setCode(function (InputInterface $input, OutputInterface $output): int {
+    $stderr = $output instanceof ConsoleOutput ? $output->getErrorOutput() : $output;
+    $logger = new ConsoleLogger($stderr);
+
+    file_exists('tfimport.phar') &&  unlink('tfimport.phar');
+
+    $finder = new Finder();
+    $finder = $finder
+        ->in(__DIR__ . '/..')
+        ->files()
+        ->notPath([
+            'bin/compile',
+            'dev/',
+            'var/',
+        ])
+        ->notName([
+            'tfimport.phar',
+            '.gitignore',
+            '.git',
+            'README.md',
+            'LICENSE',
+            'composer.json',
+            'composer.lock',
+            'CHANGELOG.md',
+        ])
+    ;
+
+    $files = [];
+    /** @var \Symfony\Component\Finder\SplFileInfo $foundFile */
+    foreach ($finder as $foundFile) {
+        $files[] = new File($foundFile->getPathname(), $foundFile->getRelativePathname());
+    }
+
+    $stub = new Stub('tfimport', 'bin/console');
+    $compiler = new Compiler($files, $stub, 'tfimport.phar');
+    $compiler->setLogger($logger);
+    $compiler->compile();
+
+    return 0;
+});
+
+$application->run();
