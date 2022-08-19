@@ -8,6 +8,9 @@ use MichalHepner\Tfimport\Terraform\Command\RefreshCommand;
 use MichalHepner\Tfimport\Terraform\Command\ShowCommand;
 use MichalHepner\Tfimport\Terraform\Provider\SchemaProvider;
 use MichalHepner\Tfimport\Terraform\State\Resource;
+use MichalHepner\Tfimport\Terraform\State\Resource\Registrator\AwsEcsTaskDefinitionRegistrator;
+use MichalHepner\Tfimport\Terraform\State\Resource\Registrator\DefaultRegistrator;
+use MichalHepner\Tfimport\Terraform\State\Resource\Registrator\Registrator;
 use MichalHepner\Tfimport\Terraform\State\ResourceInstance;
 use MichalHepner\Tfimport\Terraform\State\ResourceMode;
 use MichalHepner\Tfimport\Terraform\State\StateFile;
@@ -71,6 +74,10 @@ class RunCommand extends Command
         $this->logger->info('Updating state file to match current config..');
         $this->removeMissingResources($stateFile);
 
+        $resourceRegistrator = new Registrator();
+        $resourceRegistrator->addRegistrator(new DefaultRegistrator($resourceTypeSchemas), -1);
+        $resourceRegistrator->addRegistrator(new AwsEcsTaskDefinitionRegistrator());
+
         $resourcesInScope = [];
         foreach ($input->getArgument('resource-spec') as $resourceSpec) {
             $matches = [];
@@ -103,21 +110,8 @@ class RunCommand extends Command
             !array_key_exists($resourceType, $resourcesInScope) && $resourcesInScope[$resourceType] = [];
             $resourcesInScope[$resourceType][] = $resourceName;
 
-            $stateFile->addResource(
-                new Resource(
-                    ResourceMode::MANAGED,
-                    $resourceType,
-                    $resourceName,
-                    'provider["' . $resourceTypeSchemas[$resourceType] . '"]',
-                    [
-                        new ResourceInstance(0, [
-                            'id' => $resourceId,
-                        ]),
-                    ]
-                )
-            );
+            $resourceRegistrator->register($stateFile, $resourceType, $resourceName, $resourceId);
         }
-
 
         $this->logger->info('Updating state file..');
         $fs->dumpFile(getcwd() . '/terraform.tfstate', $stateFile->toJson());

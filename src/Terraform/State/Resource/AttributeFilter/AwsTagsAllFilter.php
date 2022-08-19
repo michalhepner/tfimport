@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace MichalHepner\Tfimport\Terraform\State\ResourceAttributeFilter;
+namespace MichalHepner\Tfimport\Terraform\State\Resource\AttributeFilter;
 
 use MichalHepner\Tfimport\Terraform\Provider\Schema\BlockAttribute;
 use MichalHepner\Tfimport\Terraform\Provider\Schema\ResourceSchema;
 use MichalHepner\Tfimport\Terraform\Provider\Schema\Schema;
 
-class ComputedFilter implements FilterInterface
+class AwsTagsAllFilter implements FilterInterface
 {
     public function shouldFilter(
         string $attributeName,
@@ -18,6 +18,6 @@ class ComputedFilter implements FilterInterface
         string $providerName,
         Schema $providerSchema
     ): bool {
-        return $attributeSchema->getComputed() && !$attributeSchema->getOptional();
+        return $providerName === 'registry.terraform.io/hashicorp/aws' && $attributeName == 'tags_all';
     }
 }

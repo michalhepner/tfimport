@@ -5,11 +5,11 @@ namespace MichalHepner\Tfimport\Terraform\State;
 
 use MichalHepner\Tfimport\Terraform\Provider\Schema\ResourceSchema;
 use MichalHepner\Tfimport\Terraform\Provider\Schema\Schema;
-use MichalHepner\Tfimport\Terraform\State\ResourceAttributeFilter\AwsTagsAllFilter;
-use MichalHepner\Tfimport\Terraform\State\ResourceAttributeFilter\ComputedFilter;
-use MichalHepner\Tfimport\Terraform\State\ResourceAttributeFilter\EmptyOptionalFilter;
-use MichalHepner\Tfimport\Terraform\State\ResourceAttributeFilter\IdFilter;
-use MichalHepner\Tfimport\Terraform\State\ResourceAttributeFilter\FilterInterface;
+use MichalHepner\Tfimport\Terraform\State\Resource\AttributeFilter\AwsTagsAllFilter;
+use MichalHepner\Tfimport\Terraform\State\Resource\AttributeFilter\ComputedFilter;
+use MichalHepner\Tfimport\Terraform\State\Resource\AttributeFilter\EmptyOptionalFilter;
+use MichalHepner\Tfimport\Terraform\State\Resource\AttributeFilter\IdFilter;
+use MichalHepner\Tfimport\Terraform\State\Resource\AttributeFilter\FilterInterface;
 
 class StateFileFilter
 {

@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace MichalHepner\Tfimport\Terraform\State\ResourceAttributeFilter;
+namespace MichalHepner\Tfimport\Terraform\State\Resource\AttributeFilter;
 
 use MichalHepner\Tfimport\Terraform\Provider\Schema\BlockAttribute;
 use MichalHepner\Tfimport\Terraform\Provider\Schema\ResourceSchema;
 use MichalHepner\Tfimport\Terraform\Provider\Schema\Schema;
 
-interface FilterInterface
+class EmptyOptionalFilter implements FilterInterface
 {
     public function shouldFilter(
         string $attributeName,
@@ -17,5 +17,7 @@ interface FilterInterface
         ResourceSchema $resourceSchema,
         string $providerName,
         Schema $providerSchema
-    ): bool;
+    ): bool {
+        return $attributeSchema->getOptional() && in_array($attributeValue, [null, []], true);
+    }
 }
